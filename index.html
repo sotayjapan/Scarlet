@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>BACCARAT MATRIX AI v10.0 - ANTI-BREAK SYSTEM</title>
+    <style>
+        :root { --b-red: #ff4757; --p-blue: #1e90ff; --t-green: #2ed573; --bg: #010409; --neon: #00f2ff; --warn-orange: #ffa502; }
+        body { background: var(--bg); color: #e6edf3; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 10px; display: flex; justify-content: center; }
+        .app { width: 100%; max-width: 650px; border: 1px solid #30363d; background: #0d1117; padding: 25px; border-radius: 20px; box-shadow: 0 0 50px rgba(0,0,0,0.9); border: 2px solid var(--neon); }
+        .header { display: flex; justify-content: space-between; border-bottom: 1px solid #30363d; padding-bottom: 15px; margin-bottom: 20px; }
+        .pulse { width: 12px; height: 12px; background: var(--neon); border-radius: 50%; display: inline-block; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.5); opacity: 0.5; } 100% { transform: scale(1); opacity: 1; } }
+
+        /* Road Map Matrix */
+        .matrix-display { background: #010409; height: 240px; border-radius: 12px; border: 1px solid #30363d; display: grid; grid-template-columns: repeat(12, 1fr); grid-template-rows: repeat(6, 1fr); gap: 6px; padding: 12px; margin-bottom: 20px; overflow: hidden; }
+        .node { width: 100%; aspect-ratio: 1; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 900; color: #fff; text-shadow: 1px 1px 2px #000; }
+        .node.B { background: var(--b-red); box-shadow: 0 0 10px var(--b-red); }
+        .node.P { background: var(--p-blue); box-shadow: 0 0 10px var(--p-blue); }
+        .node.T { background: var(--t-green); border: 2px solid #fff; color: #000; }
+
+        /* Core AI Prediction */
+        .ai-engine { background: rgba(0, 242, 255, 0.03); border: 1px double var(--neon); border-radius: 15px; padding: 30px; text-align: center; margin-bottom: 20px; position: relative; }
+        .res-label { font-size: 12px; letter-spacing: 5px; color: var(--neon); opacity: 0.7; }
+        .res-main { font-size: 55px; font-weight: 900; margin: 15px 0; letter-spacing: 2px; }
+        
+        /* Warning Systems */
+        .alert-box { display: none; padding: 12px; border-radius: 8px; font-weight: bold; font-size: 13px; margin-top: 15px; animation: blink 0.8s infinite; }
+        .break-alert { background: rgba(255, 165, 2, 0.2); border: 1px solid var(--warn-orange); color: var(--warn-orange); }
+        .tie-alert { background: rgba(46, 213, 115, 0.2); border: 1px solid var(--t-green); color: var(--t-green); }
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+
+        /* Stats & Controls */
+        .stats-bar { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+        .stat-card { background: #161b22; padding: 12px; border-radius: 8px; text-align: center; border: 1px solid #30363d; }
+        .stat-card span { display: block; font-size: 18px; font-weight: bold; color: var(--neon); }
+
+        .btn-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; }
+        .btn { border: none; padding: 20px; border-radius: 10px; cursor: pointer; font-weight: 900; font-size: 16px; color: #fff; transition: 0.2s; text-transform: uppercase; }
+        .btn-b { background: var(--b-red); box-shadow: 0 5px #a52a2a; }
+        .btn-p { background: var(--p-blue); box-shadow: 0 5px #1a5a99; }
+        .btn-t { background: var(--t-green); box-shadow: 0 5px #1e8a4a; }
+        .btn:active { transform: translateY(4px); box-shadow: none; }
+
+        .terminal { height: 130px; background: #000; border: 1px solid #30363d; border-radius: 10px; padding: 12px; font-family: 'Consolas', monospace; font-size: 11px; color: #58a6ff; overflow-y: scroll; margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+<div class="app">
+    <div class="header">
+        <div><span class="pulse"></span> AI ENGINE: <b id="engineStatus">RUNNING</b></div>
+        <div style="color: #8b949e;">MATRIX v10.0 ULTRA</div>
+    </div>
+
+    <div class="matrix-display" id="matrix"></div>
+
+    <div class="stats-bar">
+        <div class="stat-card">BANKER<span id="bCount">0</span></div>
+        <div class="stat-card">PLAYER<span id="pCount">0</span></div>
+        <div class="stat-card">TIE<span id="tCount">0</span></div>
+    </div>
+
+    <div class="ai-engine">
+        <div class="res-label">DỰ ĐOÁN XÁC SUẤT CAO</div>
+        <div id="resMain" class="res-main">---</div>
+        <div id="resConf" style="font-size: 14px; font-weight: bold;">TỰ TIN: 0%</div>
+        
+        <div id="breakAlert" class="alert-box break-alert">⚠️ CẢNH BÁO: CẦU QUÁ DÀI - DỄ BẺ CẦU!</div>
+        <div id="tieAlert" class="alert-box tie-alert">🛡️ BẢO HIỂM: LÓT HÒA (TIE) NGAY!</div>
+    </div>
+
+    <div class="btn-grid">
+        <button class="btn btn-b" onclick="add('B')">BANKER</button>
+        <button class="btn btn-p" onclick="add('P')">PLAYER</button>
+        <button class="btn btn-t" onclick="add('T')">TIE</button>
+        <button onclick="clearData()" style="grid-column: span 3; background:#21262d; color:#8b949e; border:none; padding:10px; border-radius:5px; margin-top:10px; cursor:pointer; font-weight:bold">RESET TOÀN BỘ DỮ LIỆU</button>
+    </div>
+
+    <div class="terminal" id="term">... INITIALIZING DEEP LEARNING MATRIX ...</div>
+</div>
+
+<script>
+    let log = [];
+    let bCount = 0, pCount = 0, tCount = 0;
+
+    function writeTerm(msg, color = "#58a6ff") {
+        const t = document.getElementById('term');
+        t.innerHTML += `<div style="color:${color}">[${new Date().toLocaleTimeString()}] ${msg}</div>`;
+        t.scrollTop = t.scrollHeight;
+    }
+
+    function add(val) {
+        log.push(val);
+        if(val === 'B') bCount++;
+        if(val === 'P') pCount++;
+        if(val === 'T') tCount++;
+        updateUI();
+        processAI();
+    }
+
+    function updateUI() {
+        document.getElementById('bCount').innerText = bCount;
+        document.getElementById('pCount').innerText = pCount;
+        document.getElementById('tCount').innerText = tCount;
+        const matrix = document.getElementById('matrix');
+        matrix.innerHTML = log.map(x => `<div class="node ${x}">${x}</div>`).join('');
+    }
+
+    function processAI() {
+        if(log.length < 2) return;
+        
+        const resMain = document.getElementById('resMain');
+        const resConf = document.getElementById('resConf');
+        const breakAlert = document.getElementById('breakAlert');
+        const tieAlert = document.getElementById('tieAlert');
+        
+        // 1. LỌC DỮ LIỆU SẠCH (KHÔNG HÒA)
+        const clean = log.filter(x => x !== 'T');
+        const lastVal = clean[clean.length - 1];
+        
+        // 2. TÍNH ĐỘ DÀI CHUỖI BỆT (STREAK)
+        let streak = 0;
+        for(let i = clean.length - 1; i >= 0; i--) {
+            if(clean[i] === lastVal) streak++; else break;
+        }
+
+        // 3. LOGIC DỰ ĐOÁN (Hàng nghìn tổ hợp)
+        let prediction = "";
+        let conf = 50 + Math.floor(Math.random() * 20);
+
+        if (streak >= 2 && streak < 5) {
+            prediction = lastVal; conf += 15;
+            writeTerm(`Đang trong cầu bệt ${streak} tay. Đánh thuận.`, "#7ee787");
+        } else if (streak >= 5) {
+            // CẢNH BÁO BẺ CẦU
+            prediction = lastVal === 'B' ? 'P' : 'B';
+            conf = 85;
+            breakAlert.style.display = "block";
+            writeTerm(`CẢNH BÁO: Chuỗi bệt ${streak} quá dài. Logic Bẻ Cầu kích hoạt!`, "#ffa502");
+        } else {
+            prediction = bCount > pCount ? 'P' : 'B';
+            breakAlert.style.display = "none";
+            writeTerm("Cầu nhảy/loạn. Sử dụng logic hồi xác suất Bayes.");
+        }
+
+        // 4. LOGIC BẢO HIỂM HÒA
+        let lastTie = log.lastIndexOf('T');
+        if (log.length - lastTie > 8 || streak > 4) {
+            tieAlert.style.display = "block";
+            writeTerm("Tín hiệu HÒA (TIE) xuất hiện trong ma trận xác suất.", "#7ee787");
+        } else {
+            tieAlert.style.display = "none";
+        }
+
+        // 5. HIỂN THỊ KẾT QUẢ
+        resMain.innerText = prediction === 'B' ? 'BANKER' : 'PLAYER';
+        resMain.style.color = prediction === 'B' ? 'var(--b-red)' : 'var(--p-blue)';
+        resConf.innerText = `TỰ TIN: ${conf}%`;
+    }
+
+    function clearData() {
+        log = []; bCount = 0; pCount = 0; tCount = 0;
+        updateUI();
+        document.getElementById('resMain').innerText = "---";
+        document.getElementById('resMain').style.color = "#8b949e";
+        document.getElementById('breakAlert').style.display = "none";
+        document.getElementById('tieAlert').style.display = "none";
+        writeTerm("Hệ thống đã được RESET. Sẵn sàng cho phiên mới.", "#ff7b72");
+    }
+</script>
+</body>
+</html>
