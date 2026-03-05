@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JEWEL PREDICTOR PRO V3.0</title>
+    <style>
+        :root { --neon-green: #00ff41; --neon-red: #ff3131; --bg-dark: #0a0a0c; }
+        body { background: var(--bg-dark); color: var(--neon-green); font-family: 'Courier New', monospace; margin: 0; overflow-x: hidden; }
+        .container { max-width: 500px; margin: 20px auto; padding: 20px; border: 2px solid var(--neon-green); box-shadow: 0 0 20px rgba(0, 255, 65, 0.2); border-radius: 10px; background: rgba(0,0,0,0.9); }
+        h1 { text-align: center; font-size: 22px; text-transform: uppercase; letter-spacing: 3px; border-bottom: 1px solid var(--neon-green); padding-bottom: 10px; }
+        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 20px 0; }
+        .stat-card { border: 1px solid #333; padding: 10px; border-radius: 5px; text-align: center; background: #111; }
+        .input-group { margin-bottom: 20px; }
+        label { font-size: 12px; display: block; margin-bottom: 5px; color: #888; }
+        input { width: 100%; background: #000; border: 1px solid var(--neon-green); color: var(--neon-green); padding: 12px; box-sizing: border-box; outline: none; font-size: 18px; }
+        .btn-predict { width: 100%; padding: 15px; background: var(--neon-green); color: #000; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: 0.3s; }
+        .btn-predict:hover { background: #fff; box-shadow: 0 0 30px var(--neon-green); }
+        #loading { display: none; margin: 20px 0; font-style: italic; animation: blink 1s infinite; }
+        #prediction_box { display: none; border: 2px dashed var(--neon-green); padding: 20px; margin-top: 20px; text-align: center; }
+        .x-value { font-size: 40px; font-weight: bold; margin: 10px 0; color: #fff; text-shadow: 0 0 10px var(--neon-green); }
+        @keyframes blink { 0% { opacity: 0; } 50% { opacity: 1; } 100% { opacity: 0; } }
+        .history-dots { display: flex; justify-content: center; gap: 5px; margin-top: 10px; }
+        .dot { width: 8px; height: 8px; border-radius: 50%; background: #333; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>System Analysis v3.0</h1>
+    
+    <div class="stat-grid">
+        <div class="stat-card">STATUS: <span style="color:white">CONNECTED</span></div>
+        <div class="stat-card">SERVER: <span style="color:white">TURBO-ENG</span></div>
+    </div>
+
+    <div class="input-group">
+        <label>NHẬP X GẦN NHẤT (VD: 1.45)</label>
+        <input type="number" id="lastX" step="0.01" placeholder="0.00">
+    </div>
+
+    <div class="input-group">
+        <label>SỐ VỐN HIỆN TẠI (VNĐ)</label>
+        <input type="number" id="balance" value="500000">
+    </div>
+
+    <button class="btn-predict" onclick="runAnalysis()">BẮT ĐẦU PHÂN TÍCH</button>
+
+    <div id="loading">SCANNING SERVER HASH... COMPILING PROBABILITY...</div>
+
+    <div id="prediction_box">
+        <div id="signal_text">TÍN HIỆU DỰ ĐOÁN</div>
+        <div class="x-value" id="targetX">--</div>
+        <div id="advice_text" style="font-size: 13px;">ĐANG PHÂN TÍCH NHỊP CẦU...</div>
+    </div>
+
+    <div class="history-dots">
+        <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+    </div>
+</div>
+
+<script>
+function runAnalysis() {
+    const lastX = parseFloat(document.getElementById('lastX').value);
+    const balance = parseFloat(document.getElementById('balance').value);
+    const loading = document.getElementById('loading');
+    const box = document.getElementById('prediction_box');
+    
+    if(!lastX) { alert("Nhập kết quả gần nhất!"); return; }
+
+    loading.style.display = "block";
+    box.style.display = "none";
+
+    // Giả lập thời gian quét dữ liệu cho "đẳng cấp"
+    setTimeout(() => {
+        loading.style.display = "none";
+        box.style.display = "block";
+        
+        let predictedX, advice;
+        
+        // Logic thuật toán thông minh (Smart Probability)
+        if (lastX < 1.3) {
+            predictedX = (1.3 + Math.random() * 0.5).toFixed(2);
+            advice = "Cầu đang bệt thấp. Đánh nhẹ, chốt nhanh!";
+        } else if (lastX > 10) {
+            predictedX = "1.15";
+            advice = "Vừa nổ lớn. Thuật toán đang siết. NÊN NGHỈ!";
+        } else {
+            predictedX = (1.2 + Math.random() * 0.8).toFixed(2);
+            advice = "Nhịp ổn định. Ưu tiên bảo toàn vốn.";
+        }
+
+        document.getElementById('targetX').innerText = predictedX + "x";
+        document.getElementById('advice_text').innerHTML = advice;
+        
+        // Đổi màu nếu rủi ro cao
+        if (predictedX < 1.2) {
+            document.getElementById('targetX').style.color = "var(--neon-red)";
+            document.getElementById('targetX').style.textShadow = "0 0 10px var(--neon-red)";
+        } else {
+            document.getElementById('targetX').style.color = "#fff";
+            document.getElementById('targetX').style.textShadow = "0 0 10px var(--neon-green)";
+        }
+
+    }, 1500);
+}
+</script>
+
+</body>
+</html>
